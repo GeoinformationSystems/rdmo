@@ -25,3 +25,4 @@ Creating Ckan-Plugin
 - copy code from datacie-plugin (datacite.py) to ckan.py
 - changing class from DataCiteExport to Ckan
 - write the API-request in the render function
+- OR: insert ckan.py (https://github.com/GeoinformationSystems/rdmo/edit/master/Tim_docs) to my_plugins
