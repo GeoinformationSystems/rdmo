@@ -292,8 +292,8 @@ class Ckan(Export):
         from pprint import pprint
         import xml.dom.minidom
         # Required general information for the API-Request (later perhabs given by the questionaire)
-        API_TOKEN = '536ededc-1fe8-41a8-b4b7-b35ee071fd97'
-        request = 'http://172.26.62.253/api/action/package_create'
+        API_TOKEN = 'xxx'
+        request = 'xxx'
 
         # API-POST-Request
         # create dictionary with the needed information
