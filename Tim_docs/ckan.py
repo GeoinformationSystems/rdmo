@@ -88,202 +88,6 @@ class Ckan(Export):
         'dataset_license_types/cc0': 'https://creativecommons.org/publicdomain/zero/1.0/deed.de'
     }
 
-    class Renderer(BaseXMLRenderer):
-
-        def render_document(self, xml, dataset):
-            xml.startElement('resource', {
-                'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance',
-                'xmlns': 'http://datacite.org/schema/kernel-4',
-                'xsi:schemaLocation': 'http://datacite.org/schema/kernel-4 http://schema.datacite.org/meta/kernel-4.3/metadata.xsd'
-            })
-
-            # identifier
-            identifier = dataset.get('identifier')
-            if identifier:
-                self.render_text_element(xml, 'identifier', {
-                    'identifierType': dataset.get('identifierType', 'OTHER')
-                }, identifier)
-
-            # creators
-            creators = dataset.get('creators')
-            if creators:
-                xml.startElement('creators', {})
-                for creator in creators:
-                    xml.startElement('creator', {})
-                    self.render_text_element(xml, 'creatorName', {
-                        'nameType': creator.get('nameType')
-                    }, creator.get('name'))
-
-                    if creator.get('givenName'):
-                        self.render_text_element(xml, 'givenName', {}, creator.get('givenName'))
-
-                    if creator.get('familyName'):
-                        self.render_text_element(xml, 'familyName', {}, creator.get('familyName'))
-
-                    if creator.get('nameIdentifier'):
-                        self.render_text_element(xml, 'nameIdentifier', {
-                            'nameIdentifierScheme': creator.get('nameIdentifierScheme'),
-                            'schemeURI': self.scheme_uri.get(creator.get('schemeURI')),
-                        }, creator.get('nameIdentifier'))
-
-                    for affiliation in creator.get('affiliations', []):
-                        self.render_node('affiliation', {
-                            'affiliationIdentifier': affiliation.get('affiliationIdentifier'),
-                            'affiliationIdentifierScheme': affiliation.get('affiliationIdentifierScheme')
-                        }, affiliation.get('affiliation'))
-
-                    xml.endElement('creator')
-                xml.endElement('creators')
-
-            # titles
-            titles = dataset.get('titles')
-            if titles:
-                xml.startElement('titles', {})
-                for title in titles:
-                    self.render_text_element(xml, 'title', {
-                        'titleType': title.get('titleType')
-                    }, title.get('title'))
-                xml.endElement('titles')
-
-            # publisher
-            publisher = dataset.get('publisher')
-            if publisher:
-                self.render_text_element(xml, 'publisher', {}, publisher)
-
-            # publicationYear
-            publication_year = dataset.get('publicationYear')
-            if publication_year:
-                self.render_text_element(xml, 'publicationYear', {}, publication_year)
-
-            # subjects
-            subjects = dataset.get('subjects')
-            if subjects:
-                xml.startElement('subjects', {})
-                for subject in subjects:
-                    self.render_text_element(xml, 'subject', {
-                        'subjectScheme': subject.get('subjectScheme'),
-                        'schemeURI': subject.get('schemeURI')
-                    }, subject.get('subject'))
-                xml.endElement('subjects')
-
-            # contributors
-            contributors = dataset.get('contributors')
-            if contributors:
-                xml.startElement('contributors', {})
-                for contributor in dataset.get('contributors', []):
-                    xml.startElement('contributor', {})
-                    self.render_text_element(xml, 'contributorName', {
-                        'nameType': contributor.get('nameType')
-                    }, contributor.get('name'))
-
-                    if contributor.get('givenName'):
-                        self.render_text_element(xml, 'givenName', {}, contributor.get('givenName'))
-
-                    if contributor.get('familyName'):
-                        self.render_text_element(xml, 'familyName', {}, contributor.get('familyName'))
-
-                    if contributor.get('nameIdentifier'):
-                        self.render_text_element(xml, 'nameIdentifier', {
-                            'nameIdentifierScheme': contributor.get('nameIdentifierScheme'),
-                            'schemeURI': self.scheme_uri.get(contributor.get('schemeURI')),
-                        }, contributor.get('nameIdentifier'))
-
-                    for affiliation in contributor.get('affiliations', []):
-                        self.render_node('affiliation', {
-                            'affiliationIdentifier': affiliation.get('affiliationIdentifier'),
-                            'affiliationIdentifierScheme': affiliation.get('affiliationIdentifierScheme')
-                        }, affiliation.get('affiliation'))
-
-                    xml.endElement('contributor')
-                xml.endElement('contributors')
-
-            # dates
-            created = dataset.get('created')
-            issued = dataset.get('issued')
-            if created or issued:
-                xml.startElement('dates', {})
-                if created:
-                    self.render_text_element(xml, 'date', {
-                        'dateType': 'Created'
-                    }, created)
-                if issued:
-                    self.render_text_element(xml, 'date', {
-                        'dateType': 'Issued'
-                    }, issued)
-                xml.endElement('dates')
-
-            # language
-            language = dataset.get('language')
-            if language:
-                self.render_text_element(xml, 'language', {}, language)
-
-            # resource_type
-            resource_type = dataset.get('resourceType')
-            if resource_type:
-                self.render_text_element(xml, 'resourceType', {
-                    'resourceTypeGeneral': dataset.get('resourceTypeGeneral')
-                }, resource_type)
-
-            # alternateIdentifiers
-            alternate_identifiers = dataset.get('alternateIdentifiers')
-            if alternate_identifiers:
-                xml.startElement('alternateIdentifiers', {})
-                for alternate_identifier in alternate_identifiers:
-                    self.render_text_element(xml, 'alternateIdentifier', {
-                        'alternateIdentifierType': dataset.get('alternateIdentifierType')
-                    }, alternate_identifier.get('alternateIdentifier'))
-                xml.endElement('alternateIdentifiers')
-
-            # related_identifiers
-            related_identifiers = dataset.get('relatedIdentifiers')
-            if related_identifiers:
-                xml.startElement('relatedIdentifiers', {})
-                for related_identifier in related_identifiers:
-                    self.render_text_element(xml, 'relatedIdentifier', {
-                        'relatedIdentifierType': related_identifier.get('relatedIdentifierType'),
-                        'relationType': related_identifier.get('relationType')
-                    }, related_identifier.get('relatedIdentifier'))
-                xml.endElement('relatedIdentifiers')
-
-            # rights list
-            rights_list = dataset.get('rightsList')
-            if rights_list:
-                xml.startElement('rightsList', {})
-                for rights in rights_list:
-                    self.render_text_element(xml, 'rights', {
-                        'rightsURI': rights.get('rightsURI')
-                    }, rights.get('rights'))
-                xml.endElement('rightsList')
-
-            # descriptions
-            descriptions = dataset.get('descriptions')
-            if descriptions:
-                xml.startElement('descriptions', {})
-                for description in descriptions:
-                    self.render_text_element(xml, 'description', {
-                        'descriptionType': description.get('descriptionType', 'Abstract')
-                    }, description.get('description'))
-                xml.endElement('descriptions')
-
-            # funding_references
-            funding_references = dataset.get('fundingReferences')
-            if funding_references:
-                xml.startElement('fundingReferences', {})
-                for funding_reference in funding_references:
-                    xml.startElement('fundingReference', {})
-                    self.render_text_element(xml, 'funderName', {}, funding_reference.get('funderName'))
-                    self.render_text_element(xml, 'funderIdentifier', {
-                        'schemeURI': self.scheme_uri.get(funding_reference.get('funderIdentifierType')),
-                        'funderIdentifierType': funding_reference.get('funderIdentifierType')
-                    }, funding_reference.get('funderIdentifier'))
-                    self.render_text_element(xml, 'awardNumber', {
-                        'awardURI': funding_reference.get('awardURI')
-                    }, funding_reference.get('awardNumber'))
-                    self.render_text_element(xml, 'awardTitle', {}, funding_reference.get('awardTitle'))
-                    xml.endElement('fundingReference')
-                xml.endElement('fundingReferences')
-
-            xml.endElement('resource')
 
     def render(self):
 
@@ -291,9 +95,15 @@ class Ckan(Export):
         import json
         from pprint import pprint
         import xml.dom.minidom
+
+        # GET request
+        request = 'http://172.26.62.253/api/action/package_list'
+        response = requests.post(request)
+        titles_ckan = json.loads(response.content.decode())['result']
+
         # Required general information for the API-Request (later perhabs given by the questionaire)
-        API_TOKEN = 'xxx'
-        request = 'xxx'
+        API_TOKEN = '***'
+        request = 'http://172.26.62.253/api/action/package_create'
 
         # API-POST-Request
         # create dictionary with the needed information
@@ -301,132 +111,141 @@ class Ckan(Export):
             titles = dataset.get('titles')
             dataset_dict = {
                 'name': str(titles[0]['title'][:]).lower(),
-                'contact_name': 'Tim',
-                'theme': 'https://inspire.ec.europa.eu/theme/au',
-                'spatial': '{"type":"MultiPolygon","coordinates":[[[[-20.0390625,22.05971981137765],[-20.0390625,58.14435341593962],[27.773437499999996,58.14435341593962],[27.773437499999996,22.05971981137765],[-20.0390625,22.05971981137765]]]]}',
-                'owner_org': 'rue_orga'
+                'contact_name': str(dataset.get('contactPoint')),
+                'theme': dataset.get('theme'),
+                'spatial': str(dataset.get('spatial')),
+                'owner_org': 'rue_orga',
+                'notes': dataset.get('description'),
+                'conforms_to': dataset.get('conformsTo')
             }
             headers_dict = {
                 'X-CKAN-API-Key': API_TOKEN
             }
 
+
             # send request
-            response = requests.post(request,
-                                    data=dataset_dict,
-                                    headers=headers_dict
-                                    )
-            # Http-response to see errors or titles from the API-request
-            #res2 = str(json.loads(response.content.decode()))
-            res2 = str(titles[0]['title'][:])
-            response = HttpResponse('<h1>%s</h1>' % res2)
+            if dataset_dict['name'] not in titles_ckan:
+                response = requests.post(request,
+                                        data=dataset_dict,
+                                        headers=headers_dict
+                                        )
+            else:
+                # post updated dataset
+
+                # setup the request paramters:https://global.gotomeeting.com/join/148551205
+                request2 = 'http://172.26.62.253/api/action/package_update'
+                # send request
+                response = requests.post(request2,
+                                         data=dataset_dict,
+                                         headers=headers_dict
+                                         )
+
+        response = HttpResponse('Wenn du das lesen kannst ist schonmal nicht alles schief gegangen :)')
         return response
 
     def get_datasets(self):
         datasets = []
-        for rdmo_dataset in self.get_set('project/dataset/id'):
-            index = rdmo_dataset.set_index
+        for rdmo_dataset in self.get_set('project/dataset'):
+            set_index = rdmo_dataset.set_index
             dataset = defaultdict(list)
 
             # file_name
             dataset['file_name'] = '{}.xml'.format(
-                self.get_text('project/dataset/identifier', index) or
-                self.get_text('project/dataset/id', index) or
-                str(index + 1)
+                self.get_text('project/dataset/identifier', set_index=set_index) or
+                self.get_text('project/dataset/id', set_index=set_index) or
+                str(set_index + 1)
             )
 
             # identifier
-            identifier = self.get_text('project/dataset/identifier', set_index=index)
+            identifier = self.get_text('project/dataset/identifier', set_index=set_index)
             if identifier:
                 dataset['identifier'] = identifier
                 dataset['identifierType'] = \
-                    self.get_option(self.identifier_type_options, 'project/dataset/identifier_type', set_index=index) or \
-                    self.get_option(self.identifier_type_options, 'project/dataset/pids/system', set_index=index) or \
+                    self.get_option(self.identifier_type_options, 'project/dataset/identifier_type', set_index=set_index) or \
+                    self.get_option(self.identifier_type_options, 'project/dataset/pids/system', set_index=set_index) or \
                     'OTHER'
             else:
                 dataset['identifier'] = self.get_text('project/dataset/id')
                 dataset['identifierType'] = 'OTHER'
 
-            # creators
-            for creator_name in self.get_values('project/dataset/creator/name', index):
-                creator = self.get_name('project/dataset/creator', index, creator_name.collection_index)
-                if creator:
-                    dataset['creators'].append(creator)
 
             # titles
             dataset['titles'] = [{
                 'title':
-                    self.get_text('project/dataset/title', index) or
-                    self.get_text('project/dataset/id', index) or
-                    'Dataset #{}'.format(index + 1)
+                    self.get_text('project/dataset/title', set_index=set_index) or
+                    self.get_text('project/dataset/id', set_index=set_index) or
+                    'Dataset #{}'.format(set_index + 1)
             }]
 
             # publisher
             publisher = \
-                self.get_text('project/dataset/publisher', index) or \
-                self.get_text('project/dataset/preservation/repository')
+                self.get_text('project/dataset/publisher', set_index=set_index) or \
+                self.get_text('project/dataset/preservation/repository', set_index=set_index)
             if publisher:
                 dataset['publisher'] = publisher
 
             # publication_year
-            dataset['publicationYear'] = self.get_year('project/dataset/data_publication_date', index)
+            dataset['publicationYear'] = self.get_year('project/dataset/data_publication_date', set_index=set_index)
 
             # subjects
             subjects = \
-                self.get_values('project/dataset/research/subject', index) or \
-                self.get_values('project/research_field/title')
+                self.get_values('project/dataset/research/subject', set_index=set_index) or \
+                self.get_values('project/research_field/title', set_index=set_index)
             if subjects:
                 dataset['subjects'] = [{
                     'subject': subject.value
                 } for subject in subjects]
 
-            # contributors
-            for contributor_name in self.get_values('project/dataset/contributor/name', index):
-                contributor = self.get_name('project/dataset/contributor', index, contributor_name.collection_index)
-                if contributor:
-                    dataset['contributors'].append(contributor)
 
             # dates
             dataset['created'] =  \
-                self.get_timestamp('project/dataset/date/created', index)
+                self.get_timestamp('project/dataset/date/created', set_index=set_index)
             dataset['issued'] =  \
-                self.get_timestamp('project/dataset/date/issued', index) or \
-                self.get_timestamp('project/dataset/data_publication_date', index)
+                self.get_timestamp('project/dataset/date/issued', set_index=set_index) or \
+                self.get_timestamp('project/dataset/data_publication_date', set_index=set_index)
 
             # language
-            dataset['language'] = self.get_option(self.language_options, 'project/dataset/language', index)
+            dataset['language'] = self.get_option(self.language_options, 'project/dataset/language', set_index=set_index)
 
             # resource_type
-            resource_type = self.get_text('project/dataset/resource_type', index)
+            resource_type = self.get_text('project/dataset/resource_type', set_index=set_index)
             if resource_type:
                 dataset['resourceType'] = resource_type
                 dataset['resourceTypeGeneral'] = \
-                    self.get_option(self.resource_type_general_options, 'project/dataset/resource_type_general', index)
+                    self.get_option(self.resource_type_general_options, 'project/dataset/resource_type_general', set_index=set_index)
 
             # rights
-            for rights in self.get_values('project/dataset/sharing/conditions', index):
+            for rights in self.get_values('project/dataset/sharing/conditions', set_index=set_index):
                 dataset['rights_list'].append({
                     'rights': rights.value,
                     'rightsURI': self.rights_uri_options.get(rights.option.path)
                 })
 
             # description
-            description = self.get_text('project/dataset/description', index)
+            description = self.get_text('project/dataset/description', set_index=set_index)
             if description:
                 dataset['descriptions'] = [{
                     'description': description,
                     'descriptionType': 'Abstract'
                 }]
 
-            # funding_references
-            for funder in self.get_values('project/funder'):
-                dataset['funding_reference'].append({
-                    'funderName': self.get_text('project/funder/name', funder.index),
-                    'funderIdentifier': self.get_text('project/funder/identifier', funder.index),
-                    'funderIdentifierType': self.get_text('project/funder/identifier_type', funder.index),
-                    'awardURI': self.get_text('project/funder/award_uri', funder.index),
-                    'awardNumber': self.get_text('project/funder/award_number', funder.index),
-                    'awardTitle': self.get_text('project/funder/award_title', funder.index)
-                })
+
+            # contact point
+            dataset['contactPoint'] = self.get_text('project/dataset/contactPoint', set_index=set_index)
+
+            # description
+            dataset['description'] = self.get_text('project/dataset/description', set_index=set_index)
+
+            # spatial
+            dataset['spatial'] = self.get_text('project/dataset/spatial', set_index=set_index)
+
+            # theme
+            dataset['theme'] = self.get_text('project/dataset/theme', set_index=set_index)
+
+            # reference system
+            dataset['conformsTo'] = self.get_text('project/dataset/conformsTo', set_index=set_index)
+
+            # identifier
 
             datasets.append(dataset)
 
@@ -471,3 +290,4 @@ class Ckan(Export):
             return name
         else:
             return None
+
