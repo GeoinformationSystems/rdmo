@@ -3,6 +3,7 @@ Documentary (way to actual RDMO-instance)
 Installation: 
 - following the documentation of RDMO: https://rdmo.readthedocs.io/en/latest/index.html
 - Add the IP-address in the local.py-file (in this case 172.26.62.135) at ALLOWED-HOSTS
+- for TUD-VM: use the partition "data" on the VM
 
 Deployment:
 - install Apache
@@ -25,4 +26,5 @@ Creating Ckan-Plugin
 - copy code from datacie-plugin (datacite.py) to ckan.py
 - changing class from DataCiteExport to Ckan
 - write the API-request in the render function
+- add the used attributes to the "get dataset"-function to make them reachable for the plugin
 - OR: insert ckan.py (https://github.com/GeoinformationSystems/rdmo/edit/master/Tim_docs) to my_plugins
