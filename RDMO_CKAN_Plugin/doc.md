@@ -1,4 +1,5 @@
 Documentary (way to actual RDMO-instance)
+written by: Tim Taugnitz,  Professur für Geoinformatik, TU Dresden, https://tu-dresden.de/bu/umwelt/geo/geoinformatik
 
 Installation: 
 - following the documentation of RDMO: https://rdmo.readthedocs.io/en/latest/index.html
@@ -23,7 +24,9 @@ PROJECT_EXPORTS.append(('datacite', _('as datacite'), 'my_plugins.rdmo_plugins.e
 PROJECT_EXPORTS.append(('ckan',_('to ckan'),'my_plugins.rdmo_plugins.exports.ckan.Ckan')) 
 
 Creating Ckan-Plugin
-- copy code from datacie-plugin (datacite.py) to ckan.py
+- Description: The plugin links a metadata catalogue (here: a CKAN) with the RDMO software to enable researchers to manage dataset metadata and DMP in a single                tool. That facilitates researchers in managing metadata and DMP more efficient. When entering dataset metadata in a DMP via RDMO, the developed                  plugin copies relevant metadata and publish the metadata in the catalogue via catalogue API. We therefore modified a Science Europe template to                  fit to our developed metadata profile for geodata.
+
+- copy code from datacite-plugin (datacite.py) to ckan.py
 - changing class from DataCiteExport to Ckan
 - write the API-request in the render function
 - add the used attributes to the "get dataset"-function to make them reachable for the plugin
