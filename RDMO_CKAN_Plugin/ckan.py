@@ -97,13 +97,13 @@ class Ckan(Export):
         import xml.dom.minidom
 
         # GET request
-        request = 'http://172.26.62.253/api/action/package_list'
+        request = 'add-server-ip/api/action/package_list'
         response = requests.post(request)
         titles_ckan = json.loads(response.content.decode())['result']
 
-        # Required general information for the API-Request (later perhabs given by the questionaire)
+        # Required general information for the API-Request (later perhaps given by the questionnaire)
         API_TOKEN = '***'
-        request = 'http://172.26.62.253/api/action/package_create'
+        request = 'add-server-ip/api/action/package_create'
 
         # API-POST-Request
         # create dictionary with the needed information
@@ -132,15 +132,15 @@ class Ckan(Export):
             else:
                 # post updated dataset
 
-                # setup the request paramters:https://global.gotomeeting.com/join/148551205
-                request2 = 'http://172.26.62.253/api/action/package_update'
+                # setup the request paramters:
+                request2 = 'ad-server-ip/api/action/package_update'
                 # send request
                 response = requests.post(request2,
                                          data=dataset_dict,
                                          headers=headers_dict
                                          )
 
-        response = HttpResponse('Wenn du das lesen kannst ist schonmal nicht alles schief gegangen :)')
+        response = HttpResponse('Export Plugin runs without any errors, check in Ckan for changes in datasets')
         return response
 
     def get_datasets(self):
