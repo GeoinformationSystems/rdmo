@@ -1,3 +1,12 @@
+# RDMO to Ckan Plugin
+# written by: Tim Taugnitz,  Professur für Geoinformatik, TU Dresden, https://tu-dresden.de/bu/umwelt/geo/geoinformatik
+# The plugin links a metadata catalogue (here: a CKAN) with the RDMO software to enable researchers to manage dataset 
+# metadata and DMP in a single tool. That facilitates researchers in managing metadata and DMP more efficient. When 
+# entering dataset metadata in a DMP via RDMO, the developed plugin copies relevant metadata and publish the metadata 
+# in the catalogue via catalogue API. We therefore modified a Science Europe template to fit to our developed metadata 
+# profile for geodata. 
+
+
 import zipfile
 from collections import defaultdict
 
